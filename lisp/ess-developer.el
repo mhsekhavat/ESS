@@ -60,16 +60,6 @@ list."
   :group 'ess-developer
   :type 'string)
 
-(defvar ess-developer-root-file "DESCRIPTION"
-  "If this file is present in the directory, it is considered a
-  project root.")
-
-;; (defcustom ess-developer-force-attach nil
-;;   "If non-nill all the packages listed in `ess-developer-packages' should be attached
-;; when ess-developer mode is turned on."
-;;   :group 'ess-developer
-;;   :type 'boolean)
-
 (defcustom ess-developer-enter-hook nil
   "Normal hook run on entering `ess-developer' mode."
   :group 'ess-developer
@@ -99,7 +89,39 @@ See also `ess-developer-load-package' for related functionality."
   :group 'ess-developer
   :type 'alist)
 
-(defvar ess-developer--load-hist nil)
+(defcustom ess-developer-project-eval-style 'dwim
+  "Behavior of the ess-developer evaluation engine.
+
+This setting applies only for files inside an R project
+directory.
+
+If set to 'always, always evaluate into the current package, with
+no prompting and irrespective of whether the current package is
+present in `ess-developer-packages' list or not.
+
+If set to 'always-when-in-dev-list, always evaluate into current
+package with no prompting if the package is in
+`ess-developer-packages' list. If not in the list, ask for the
+evaluation environment. This is the default behavior.
+
+If set to 'functions-only, only functions are evaluated into the
+package if the package is listed in `ess-developer-packages'. For
+all other evaluation actions, prompt the user for evaluation
+environment
+
+When the R process is in the debugging state, always ask the user
+for the evaluation environment irespective of the setting of this
+variable.")
+
+
+(defvar ess-developer-root-file "DESCRIPTION"
+  "If this file is present in the directory, it is considered a
+  project root.")
+
+(defvar ess-developer--hist nil
+  "History of evaluated/soured into packages.")
+(defvar ess-developer--load-hist nil
+  "History of loaded packages through `ess-developer'.")
 
 (defun ess-developer-add-package (&optional attached-only)
   "Add a package to `ess-developer-packages' list.
@@ -217,8 +239,6 @@ otherwise call devSource."
               ;; last resort - assign in current env 
               (unless assigned-p
                 (ess-developer-send-region-fallback proc beg end visibly message tracebug)))))))))
-
-(defvar ess-developer--hist nil)
 
 (defun ess-developer-send-region (proc beg end &optional visibly message tracebug)
   "Ask for for the package and devSource region into it."
