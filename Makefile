@@ -9,7 +9,6 @@ ETC_FILES = # etc/SVN-REVISION  etc/ESSR-VERSION
 all install uninstall: $(ETC_FILES)
 	cd etc; $(MAKE) $@
 	cd lisp; $(MAKE) $@
-	cd doc; $(MAKE) $@
 
 lisp: $(ETC_FILES)
 	cd lisp; $(MAKE)
@@ -156,5 +155,4 @@ builddeb:
 clean distclean: cleanup-dist
 	cd etc; $(MAKE) $@
 	cd lisp; $(MAKE) $@
-	cd doc; $(MAKE) $@
 #	rm -f etc/SVN-REVISION*
